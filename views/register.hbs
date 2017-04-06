@@ -8,3 +8,9 @@
 	<input type='submit' value='Register'>
 </form>
 
+{{#if passwordLength}}
+	<h1> Sorry but the inputed password is too short </h1>
+{{else if userExists}}
+	<h1> Sorry but the username already exists </h1>
+{{/if}}
+
