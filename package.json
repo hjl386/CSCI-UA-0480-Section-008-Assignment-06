@@ -1,0 +1,27 @@
+{
+  "name": "login",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nyu-csci-ua-0480-008-spring-2017/hjl386-homework06.git"
+  },
+  "author": "Han Jie Lee",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nyu-csci-ua-0480-008-spring-2017/hjl386-homework06/issues"
+  },
+  "homepage": "https://github.com/nyu-csci-ua-0480-008-spring-2017/hjl386-homework06#readme",
+  "dependencies": {
+    "body-parser": "^1.17.1",
+    "express": "^4.15.2",
+    "express-session": "^1.15.2",
+    "hbs": "^4.0.1",
+    "mongoose": "^4.9.3",
+    "mongoose-url-slugs": "^0.2.1"
+  }
+}
