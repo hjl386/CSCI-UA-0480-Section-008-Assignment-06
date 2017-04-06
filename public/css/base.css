@@ -1,0 +1,6 @@
+body{
+	background-color: linear-gradient(to right, #4ac29a, #bdfff3); 
+	background-image: url('/img/sakura.jpg'); 
+	background-repeat: no-repeat;
+	background-size: cover;
+}
