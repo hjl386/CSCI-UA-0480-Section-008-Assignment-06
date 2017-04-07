@@ -121,4 +121,22 @@ app.post('/login', (req, res) => {
 	});
 });
 
+app.get('/restricted', (req, res) => {
+	if(req.session.username === undefined){
+		res.redirect('/login');
+	} else{
+		res.render('restricted');
+	}
+});
+
+app.get('/logout', (req, res) => {
+	req.session.destroy(err => {
+		if(err){
+			console.log(err);
+		} else{
+			res.redirect('/');
+		}
+	});	
+});
+
 app.listen(PORT, HOST);
