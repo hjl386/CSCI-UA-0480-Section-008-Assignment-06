@@ -1,6 +1,11 @@
 <h1><center> HOME </center></h1>
-<!--
-{{#if state}}
-	<h2> Currently logged in as: {{this.username}}! </h2>
-{{/if}}
--->
+
+{{#if sess}}
+	<h1> You are logged in as {{username}} </h1>
+{{else}} {{#unless sess}} 
+	<h1> You are not logged in <h1>
+{{/unless}}
+{{/if}} 
+
+<a href='/register'>Register</a> | 
+<a href='/login'>Login</a>

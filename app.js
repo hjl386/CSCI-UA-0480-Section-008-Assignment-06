@@ -21,7 +21,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
 const sessionOptions = {
-	secret: 'secret thing',
+	secret: 'peaow8rk2n0-h.;u/abue.j9c1ko[-m]',
 	resave: true, 
 	saveUninitialized: true
 }
@@ -32,86 +32,93 @@ app.get('/css/base.css', (req, res) => {
 });
 
 app.get('/', (req, res) => {
-	res.render('home');
+	let sess = true;
+	if(req.session.username  === undefined){
+		sess = false;
+	} 
+	res.render('home', {sess: sess, username: req.session.username});
 });
 
 app.get('/register', (req, res) => {
-	User.find({}, (err, users) => {
-		if(err){
-			console.log(err);
-		}
-		res.render('register', {users: users});
-	});
+	res.render('register');
 });
-
-function regenerateSession(err, req, res){
-	if(!err){
-		req.session.username = uHashed.username;
-		res.redirect('/');
-	} else{
-		console.log(err)
-		res.send("ERROR");
-	}	
-}
-
-function hashP(err, req, res, hash){
-	if(err){
-		console.log(err);
-	}
-	const uHashed = new User({
-		username: req.body.username,
-		password: hash
-	});
-	uHashed.save(err =>{
-		if(err){
-			console.log(err);
-		}
-		req.session.regenerate(regenerateSession);
-	});
-}
 
 app.post('/register', (req, res) => {
 	const u = new User({
 		username: req.body.username,
 		password: req.body.password
 	});
-	User.findOne({username: req.body.username}, (err, user) => {
-		if(user){
-			console.log("DOES IT RE RENDER THE REGISTRATION PAGE?");
-			res.render('register', {userExists: true});
-		}
-	});
 	if(u.password.length < 8){
 		res.render('register', {passwordLength: true});
 	} else{
-		bcrypt.hash(u.password, saltRounds, hashP()); 
-	}
-/*	} else{
-		bcrypt.hash(u.password, saltRounds, (err, hash) => { 
-			if(err){
-				console.log(err);
-			}
-			const uHashed = new User({
-				username: req.body.username,
-				password: hash
-			});
-			uHashed.save(err => {
-				if(err){
-					console.log(err);
-				}
-				req.session.regenerate(err => {
-					if(!err){
-						req.session.username = uHashed.username;
-						res.redirect('/');
-					} else {
+		User.findOne({username: req.body.username}, (err, user) => {
+			if(user){
+				res.render('register', {userExists: true});
+			} else{
+				bcrypt.hash(u.password, saltRounds, (err, hash) => { 
+					if(err){
 						console.log(err);
-						res.send('An error has occured, please see the server logs for more information');
 					}
-				});		
-			});
+					const uHashed = new User({
+						username: req.body.username,
+						password: hash
+					});
+					uHashed.save(err => {
+						if(err){
+							console.log(err);
+						}
+						req.session.regenerate(err => {
+							if(!err){
+								req.session.username = uHashed.username;
+								res.redirect('/');
+							} else {
+								console.log(err);
+								res.send('An error has occured, see the server logs for more information');
+							}
+						});		
+					});
+				});
+			}
 		});
 	}
-*/
+});
+
+app.get('/login', (req, res) => {
+	res.render('login');
+});
+
+app.post('/login', (req, res) => {
+	const u = new User({
+		username: req.body.username,
+		password: req.body.password
+	});
+	User.findOne({username: req.body.username}, (err, user) => {
+		if(!err && user){
+			bcrypt.hash(u.password, saltRounds, (err, hash) => {
+				if(err){
+					console.log(err);
+				} else{
+					const logHashed = new User({
+						username: req.body.username,
+						password: hash
+					});
+					bcrypt.compare(u.password, logHashed.password, (err, passwordMatch) => {
+						req.session.regenerate(err => {
+							if(!err){
+								req.session.username = logHashed.username;
+								res.redirect('/');
+							} else {
+								console.log(err);
+								res.send('An error has occured, see the server logs for more information');	
+							}		
+						});	
+					});			
+				}
+			});			
+		} else{
+			res.render('login', {userExists: true});
+		}
+	});
 });
 
 app.listen(PORT, HOST);
