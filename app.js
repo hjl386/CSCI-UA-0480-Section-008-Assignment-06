@@ -55,6 +55,7 @@ app.post('/register', (req, res) => {
 			if(user){
 				res.render('register', {userExists: true});
 			} else{
+				console.log("READABLE PASSWORD: ", u.password);
 				bcrypt.hash(u.password, saltRounds, (err, hash) => { 
 					if(err){
 						console.log(err);
@@ -63,6 +64,7 @@ app.post('/register', (req, res) => {
 						username: req.body.username,
 						password: hash
 					});
+					console.log("JUST MADE: ", hash);
 					uHashed.save(err => {
 						if(err){
 							console.log(err);
@@ -86,33 +88,52 @@ app.post('/register', (req, res) => {
 app.get('/login', (req, res) => {
 	res.render('login');
 });
+/*
+function hash(req){
+	bcrypt.hash(req.body.password, saltRounds, (err, hash) => {
+		if(err){
+			console.log(err);
+		} else{
+			const userN = new User({
+				username: req.body.username,
+				password: hash
+			});			
+		}
+	});
+	console.log("FUNCTION", hash);
+	return hash;
+}
+
+function compare(hash, fn){
+	bcrypt.compare(hash, this.password, (err, match) => {
+		if (err){
+			console.log(err);
+		} else{
+			fn(null, match);
+		}
+	});
+}
+*/
 
 app.post('/login', (req, res) => {
-	const u = new User({
-		username: req.body.username,
-		password: req.body.password
-	});
 	User.findOne({username: req.body.username}, (err, user) => {
 		if(!err && user){
-			bcrypt.hash(u.password, saltRounds, (err, hash) => {
-				if(err){
-					console.log(err);
-				} else{
-					const logHashed = new User({
-						username: req.body.username,
-						password: hash
+			bcrypt.compare(req.body.password, user.password, (err, passwordMatch) => {
+				if(passwordMatch){
+					console.log("PASSWORD MATCH, ", passwordMatch);
+					console.log("req.body.password ", req.body.password);
+					console.log("user.password ", user.password);
+					req.session.regenerate(err => {
+						if(!err){
+							req.session.username = user.username;
+							res.redirect('/');
+						} else {
+							console.log(err);
+							res.send('An error has occured, see the server logs for more information');	
+						}		
 					});
-					bcrypt.compare(u.password, logHashed.password, (err, passwordMatch) => {
-						req.session.regenerate(err => {
-							if(!err){
-								req.session.username = logHashed.username;
-								res.redirect('/');
-							} else {
-								console.log(err);
-								res.send('An error has occured, see the server logs for more information');	
-							}		
-						});	
-					});			
+				} else {
+					res.render('login', {fail: true});
 				}
 			});			
 		} else{
@@ -121,6 +142,49 @@ app.post('/login', (req, res) => {
 	});
 });
 
+/*
+app.post('/login', (req, res) => {
+	User.findOne({username: req.body.username}, (err, user) => {
+		if(!err && user){
+			console.log("WAIT WHAT THIS? ", req.body.username, " PASS ", req.body.password);
+			console.log("READ TYPE IN PASS ", user.username, " PASS ",  user.password);
+			bcrypt.hash(req.body.password, saltRounds, (err, hash) => {
+				if(err){
+					console.log(err);
+				} else{
+					const logHashed = new User({
+						username: req.body.username,
+						password: hash
+					});
+					console.log(hash);
+				//	bcrypt.compare(user.password, logHashed.password, (err, passwordMatch) => {
+					bcrypt.compare(user.password, hash, (err, passwordMatch) => {
+						console.log("Original Password: ", user.password);
+						console.log("Typed in Password: ", logHashed.password);
+						console.log("HASH: ", hash);
+						console.log(passwordMatch);
+						if(passwordMatch){
+							req.session.regenerate(err => {
+								if(!err){
+									req.session.username = logHashed.username;
+									res.redirect('/');
+								} else {
+									console.log(err);
+									res.send('An error has occured, see the server logs for more information');	
+								}		
+							});
+						} else {
+							res.render('login', {fail: true});
+						}
+					});			
+				}
+			});			
+		} else{
+			res.render('login', {userExists: true});
+		}
+	});
+});
+*/
 app.get('/restricted', (req, res) => {
 	if(req.session.username === undefined){
 		res.redirect('/login');

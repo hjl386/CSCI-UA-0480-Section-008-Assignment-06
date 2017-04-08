@@ -2,6 +2,7 @@
 
 {{#if sess}}
 	<h1> You are logged in as {{username}} </h1>
+	<h2><a href='/logout'>Logout</a></h2>
 {{else}} {{#unless sess}} 
 	<h1> You are not logged in <h1>
 {{/unless}}
@@ -14,6 +15,3 @@
 Try checking out the <a href='/restricted'>Page that Requires Authentication</a>
 </h2>
 
-<form method='GET' action=''>
-	<input type='submit' value='Logout'>
-</form>
