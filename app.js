@@ -33,11 +33,8 @@ app.get('/css/base.css', (req, res) => {
 
 app.get('/', (req, res) => {
 	let sess = true;
-	if(req.session.username === undefined){
+	if(req.session.username === undefined){  // or if(req.session.username){}
 		sess = false;
-	}
-	if(req.session.username){
-		console.log("WHT");
 	} 
 	res.render('home', {sess: sess, username: req.session.username});
 });
@@ -60,7 +57,6 @@ app.post('/register', (req, res) => {
 			} else if(user){
 				res.render('register', {userExists: true});
 			} else{
-				console.log("READABLE PASSWORD: ", u.password);
 				bcrypt.hash(u.password, saltRounds, (err, hash) => { 
 					if(err){
 						console.log(err);
@@ -69,7 +65,6 @@ app.post('/register', (req, res) => {
 						username: req.body.username,
 						password: hash
 					});
-					console.log("JUST MADE: ", hash);
 					uHashed.save(err => {
 						if(err){
 							console.log(err);

@@ -9,4 +9,5 @@ hjl386
 
 Create a site that allows user registration and login.  User data will be stored in MongoDB, with passwords salted and hashed.  A successful registration or login will result in an authentication session.  Some pages on the site will require an authenticated session to view content.  
 
-
+## Extra Credit 
+I finished the extra credit, you can logout from the home page after logging in and the restricted page
