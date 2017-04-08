@@ -1,7 +1,6 @@
 // Database 
 
 const mongoose = require('mongoose');
-const URLSlugs = require('mongoose-url-slugs');
 
 const User = new mongoose.Schema({
 	username: {type: String, unique: true},

@@ -24,7 +24,7 @@ const sessionOptions = {
 	secret: 'peaow8rk2n0-h.;u/abue.j9c1ko[-m]',
 	resave: true, 
 	saveUninitialized: true
-}
+};
 app.use(session(sessionOptions));
 
 app.get('/css/base.css', (req, res) => {
@@ -33,7 +33,7 @@ app.get('/css/base.css', (req, res) => {
 
 app.get('/', (req, res) => {
 	let sess = true;
-	if(req.session.username  === undefined){
+	if(req.session.username === undefined){
 		sess = false;
 	} 
 	res.render('home', {sess: sess, username: req.session.username});
@@ -52,7 +52,9 @@ app.post('/register', (req, res) => {
 		res.render('register', {passwordLength: true});
 	} else{
 		User.findOne({username: req.body.username}, (err, user) => {
-			if(user){
+			if(err) {
+				console.log(err);
+			} else if(user){
 				res.render('register', {userExists: true});
 			} else{
 				console.log("READABLE PASSWORD: ", u.password);
