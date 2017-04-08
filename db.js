@@ -8,7 +8,5 @@ const User = new mongoose.Schema({
 	password: String
 });
 
-//User.plugin(URLSlugs('title'));
-
 mongoose.model('User', User);
 mongoose.connect('mongodb://localhost/hw06');
